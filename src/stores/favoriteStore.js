@@ -15,7 +15,12 @@ export const useCounterStore = defineStore('favouriteProducts', () => {
 
   }
 
+  const isFavorite = (product) => {
+    return favouritesList.value.some(p => p.id === product.id);
+  }
+
   return {
+    isFavorite,
     checkFavourites,
     favouritesList,
   }

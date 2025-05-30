@@ -46,7 +46,7 @@
 
           <button class="favourite-button" >
 
-            <font-awesome-icon :icon="card.isFavorite ? ['fas', 'heart'] : ['far', 'heart']" class="text-white fa-2x"  alt="heart-button" @click="favourite.checkFavourites(card), productStore.toggleFavorite(card)" />
+            <font-awesome-icon :icon="favourite.isFavorite(card) ? ['fas', 'heart'] : ['far', 'heart']" class="text-white fa-2x"  alt="heart-button" @click="favourite.checkFavourites(card)" />
 
           </button>
         </div>
@@ -245,6 +245,19 @@
     margin-left: 5%;
   }
 
+  .list-move{
+    transition: transform 0.5s;
+  }
+   .list-enter-active, .list-leave-active {
+  transition: opacity 0.5s;
+}
+ .list-enter-from, .list-leave-to {
+  opacity: 0;
+}
+.list-enter-to, .list-leave-from {
+  opacity: 1;
+}
+
 @media screen and (min-width: 1400px) {
     .products{
       display: grid;
@@ -252,9 +265,7 @@
     }
   }
 
-  .list-move{
-    transition: transform 0.5s;
-  }
+
 
 
 </style>
@@ -268,11 +279,14 @@
   import upIcon from '@/components/icons/up-arrow-svgrepo-com.svg'
   import { storeToRefs } from 'pinia';
 
+  import {useProductStore} from '@/stores/productStore';
+  let productStore = useProductStore();
 
   import { useCounterStore } from '@/stores/favoriteStore';
-  import {useProductStore} from '@/stores/productStore';
   const favourite = useCounterStore();
-  let productStore = useProductStore();
+
+
+
   const { products } = storeToRefs(productStore);
   onMounted(async () => {
   await productStore.fetchProducts();

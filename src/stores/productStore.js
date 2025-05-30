@@ -14,18 +14,13 @@ export const useProductStore = defineStore('products', () => {
     }catch(error){
       console.error('Ошибка загрузки продуктов:', error);
     }
-
-
   };
 
 
-  const toggleFavorite = (card) => {
-    card.isFavorite = !card.isFavorite;
-};
 
 
 
-  return { products, fetchProducts, toggleFavorite};
+  return { products, fetchProducts};
 
 
 });
