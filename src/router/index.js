@@ -5,6 +5,7 @@ import Register from '@/views/RegisterPage.vue'
 import HomePage from '@/views/HomePage.vue'
 import SearchPage from '@/views/SearchPage.vue'
 import FavouritePage from '@/views/FavouritePage.vue'
+import ProductDetail from '@/views/ProductDetail.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -39,6 +40,12 @@ const router = createRouter({
       path: '/favourite',
       name: 'FavouritesPage',
       component: FavouritePage,
+    },
+    {
+      path: '/product/:id',
+      name: 'ProductDetail',
+      component: ProductDetail,
+      props: true
     }
   ],
 })

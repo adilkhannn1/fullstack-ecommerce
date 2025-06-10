@@ -12,7 +12,7 @@
 
   <div class="hidden sm:block max-w-[500px]  w-[100%]   border-b border-white flex flex-row justify-between">
           <input
-            v-model="password"
+            v-model="search"
             type="text"
             placeholder="Поиск...."
             class="h-[40px]  w-[90%]  text-white placeholder-white focus:outline-none"
@@ -23,36 +23,49 @@
       </div>
   </div>
 
-  <div class="products grid gap-y-[30px] grid-cols-1 md:grid-cols-2  md:gap-x-[100px] lg:grid-cols-3">
+  <div v-if="filteredProducts.length === 0">
+      <h1 class="text-white">Ничего не найдено</h1>
+  </div>
+  <div v-else>
 
-   <transition-group name="list" >
+    <div class="products grid gap-y-[30px] grid-cols-1 md:grid-cols-2  md:gap-x-[100px] lg:grid-cols-3">
+<transition-group name="list" >
 
-     <div class="w-[100%]  card grid gap-[10px] w-[250px] sm:w-[450px]  md:w-[300px]  lg:w-[250px] " v-for="card in filteredProducts" :key="card.id">
-        <div class="card-image   w-[100%]" >
-          <img :src="card.images[0]" class="bg-cover bg-center w-[100%] h-[100%] rounded-[15px]" alt="card-image">
-        </div>
+  <div class="w-[100%]  card grid gap-[10px] w-[250px] sm:w-[450px]  md:w-[300px]  lg:w-[250px] " v-for="card in filteredProducts" :key="card.id">
 
-      <div class="card-discription w-[100%] flex flex-row justify-between">
-        <div class="card-text text-white">
-          <div class="card-name">
-            <h2>{{card.name}}</h2>
-          </div>
-          <div class="card-price">
-            <h3>{{ `${card.price}тг`}}</h3>
-          </div>
-        </div>
+    <router-link :to="`/product/${card.id}`">
+      <div class="card-image   w-[100%]" >
+       <img :src="card.images[0]" class="bg-cover bg-center w-[100%] h-[100%] rounded-[15px]" alt="card-image">
+     </div>
+    </router-link>
 
-        <div class="card-button w-[40px]">
 
-          <button class="favourite-button" >
+     <div class="card-discription w-[100%] flex flex-row justify-between">
+     <div class="card-text text-white">
+       <div class="card-name">
+         <h2>{{card.name}}</h2>
+       </div>
+       <div class="card-price">
+         <h3>{{ `${card.price}тг`}}</h3>
+       </div>
+     </div>
 
-            <font-awesome-icon :icon="favourite.isFavorite(card) ? ['fas', 'heart'] : ['far', 'heart']" class="text-white fa-2x"  alt="heart-button" @click="favourite.checkFavourites(card)" />
+     <div class="card-button w-[40px]">
+       <button class="favourite-button" >
+         <font-awesome-icon :icon="favourite.isFavorite(card) ? ['fas', 'heart'] : ['far', 'heart']" class="text-white fa-2x"  alt="heart-button" @click="favourite.checkFavourites(card)" />
+       </button>
+     </div>
+   </div>
+  </div>
+</transition-group>
 
-          </button>
-        </div>
-      </div>
-    </div>
-  </transition-group>
+</div>
+
+
+
+
+
+
 
   </div>
 
@@ -78,7 +91,7 @@
 
         <div class="flex flex-col w-[90%] ">
           <label @click="sortProductsByPrice('default')" class="flex flex-row items-center gap-[10px]">
-             <input type="radio" name="option" value="3" > Сортировка по умолчанию
+             <input type="radio" name="option" value="3" checked> Сортировка по умолчанию
           </label>
           <label @click="sortProductsByPrice('asc')" class="flex flex-row items-center gap-[10px]">
             <input type="radio" name="option" value="1" >
@@ -288,14 +301,14 @@
 
 
   const { products } = storeToRefs(productStore);
+
+
   onMounted(async () => {
-  await productStore.fetchProducts();
-
-});
-
+  await productStore.fetchProducts()
+})
 
     let rotated = false;
-    const password = ref('')
+    const search = ref('')
     let widtdLine;
     let minPriceLimit = ref(5000);
     let maxPriceLimit = ref(57000);
@@ -327,10 +340,12 @@
       let filteredProducts =  computed(()=>{
 
         if (!products.value || !Array.isArray(products.value)) {
-           return [];
+          return [];
         }
 
         let result = [...products.value];
+
+
 
 
         if(manIsActive.value)  result = result.filter(product => product.gender == 'мужское');
@@ -341,15 +356,22 @@
 
         result = result.filter(product => product.price >= minPriceLimit.value && product.price <= maxPriceLimit.value);
 
+
+
         result = result.filter(product => {
              const matchesCategory = selectedCategories.value.length === 0 || selectedCategories.value.includes(product.category);
              const matchesColor = selectedColors.value.length === 0 || selectedColors.value.includes(product.color);
              return matchesColor && matchesCategory;
             });
 
+            if (search.value.length >= 3) {
+    result = result.filter(product =>
+      product.name.toLowerCase().includes(search.value.toLowerCase())
+    )
+  }
+
         return result;
       })
-
 
       const sortProductsByPrice = (option)=>{
         sortPriceOption.value = option;
@@ -381,10 +403,6 @@
     const categoryMenu = ref(null);
 
 
-    onMounted(async () => {
-  await productStore.fetchProducts()
-
-})
 
     const positionLeftCircle = ref();
     const positionRightCircle = ref();

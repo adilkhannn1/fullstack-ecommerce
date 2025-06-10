@@ -45,12 +45,6 @@
 
       </div>
       </div>
-
-
-
-
-
-
     </div>
 </template>
 
@@ -77,13 +71,13 @@
   opacity: 1;
 }
 
-
 </style>
+
+
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import SearchIcon from '@/assets/img/search-icon.png';
-
 
 const inputValue = ref('');
 import { useCounterStore } from '@/stores/favoriteStore';
@@ -99,15 +93,8 @@ onMounted(()=> {
 const productStore = useProductStore();
 const products = computed(()=> productStore.products);
 
-
-
-
 const filteredSearchProducts = computed(()=> {
   return products.value.filter(product => product.name.toLowerCase().includes(inputValue.value.toLocaleLowerCase()));
 })
-
-
-
-
 
 </script>

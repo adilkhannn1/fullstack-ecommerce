@@ -15,14 +15,7 @@ export const useProductStore = defineStore('products', () => {
       console.error('Ошибка загрузки продуктов:', error);
     }
   };
-
-
-
-
-
   return { products, fetchProducts};
-
-
 });
 
 
